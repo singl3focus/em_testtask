@@ -1,0 +1,10 @@
+basePath: /
+info:
+  contact: {}
+  description: This is a song library API as a test assignment for the company Effective
+    mobile
+  termsOfService: http://swagger.io/terms/
+  title: Songs API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

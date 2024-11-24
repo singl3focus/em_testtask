@@ -1,0 +1,18 @@
+
+# Configs
+*.env
+
+# IDE
+/vscode
+*.vscode
+
+# Logs
+/logs
+
+# Binaries for programs, plugins, cache
+/.database/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
