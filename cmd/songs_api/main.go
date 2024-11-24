@@ -32,9 +32,13 @@ func main() {
 		log.Fatal("logger not setted")
 	}
 
+	log.Printf("%#v", cfg)
+
+	time.Sleep(15 * time.Second)
+
 	r, err := postgres.NewPostgresDB(cfg.Database.Link, logger)
 	if err != nil {
-		logger.Error("Connect to postgres db error", "(error)", err)
+		logger.Error("connect to postgres db error", "(error)", err)
 		return
 	}
 	s := service.NewService(r, logger)

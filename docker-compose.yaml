@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      dockerfile: ./Dockerfile
+    ports:
+      - 5001:5001
+    depends_on:
+      - db
+    environment:
+      - TZ=Europe/Moscow
+      - LOGGER_ENABLE=true
+      - SERVER_PORT=5001
+      - DATABASE_CONNECT_LINK=host=db port=5432 user=postgres dbname=postgres password=qwerty sslmode=disable
+    networks:
+      - my_network
+
+  db:
+    container_name: db
+    restart: always
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - TZ=Europe/Moscow
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=qwerty
+    volumes:
+      - ./.database/postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    networks:
+      - my_network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  my_network:
+    driver: bridge

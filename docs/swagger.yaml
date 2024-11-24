@@ -1,4 +1,51 @@
 basePath: /
+definitions:
+  handler.Error:
+    properties:
+      error:
+        type: string
+    type: object
+  handler.Result:
+    properties:
+      message:
+        type: string
+    type: object
+  handler.UpdateSongInfoRequest:
+    properties:
+      newGroupName:
+        type: string
+      newSongTitle:
+        type: string
+      oldGroupName:
+        type: string
+      oldSongTitle:
+        type: string
+    type: object
+  models.Song:
+    properties:
+      group:
+        type: string
+      title:
+        type: string
+      verses:
+        items:
+          $ref: '#/definitions/models.Verse'
+        type: array
+    type: object
+  models.SongInfo:
+    properties:
+      group:
+        type: string
+      title:
+        type: string
+    type: object
+  models.Verse:
+    properties:
+      number:
+        type: integer
+      text:
+        type: string
+    type: object
 info:
   contact: {}
   description: This is a song library API as a test assignment for the company Effective
@@ -6,5 +53,178 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Songs API
   version: "1.0"
-paths: {}
+paths:
+  /song/add:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Song
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/models.Song'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Song was succesfully added
+          schema:
+            $ref: '#/definitions/handler.Result'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Add song
+      tags:
+      - song
+  /song/info/get:
+    get:
+      parameters:
+      - description: Group Name
+        in: query
+        name: groupName
+        required: true
+        type: string
+      - description: Song Title
+        in: query
+        name: songTitle
+        required: true
+        type: string
+      - description: Offset
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Songs info
+          schema:
+            items:
+              $ref: '#/definitions/models.SongInfo'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get songs info by matched params
+      tags:
+      - song
+  /song/remove:
+    delete:
+      parameters:
+      - description: Group Name
+        in: query
+        name: groupName
+        required: true
+        type: string
+      - description: Song Title
+        in: query
+        name: songTitle
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Song was successfully removed
+          schema:
+            $ref: '#/definitions/handler.Result'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Remove song by groupName, songTitle
+      tags:
+      - song
+  /song/text/by-verses:
+    get:
+      parameters:
+      - description: Group Name
+        in: query
+        name: groupName
+        required: true
+        type: string
+      - description: Song Title
+        in: query
+        name: songTitle
+        required: true
+        type: string
+      - description: Offset
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Song text
+          schema:
+            $ref: '#/definitions/handler.Result'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get song's text by groupName,songTitle with verses pagination
+      tags:
+      - song
+  /song/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Old and new song info
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateSongInfoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Song's info was successfully update
+          schema:
+            $ref: '#/definitions/handler.Result'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Update song by groupName, songTitle
+      tags:
+      - song
 swagger: "2.0"

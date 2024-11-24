@@ -14,7 +14,7 @@ type Config struct {
 }
 
 type Server struct {
-	Port string `yaml:"port" env-default:"5005"`
+	Port string `yaml:"port" env-default:"5005" env:"SERVER_PORT"`
 }
 
 type Database struct {
@@ -37,10 +37,10 @@ func GetConfig(configPath string) *Config {
 		log.Fatal(err)
 	}
 
-	var cfg *Config
-	if err := cleanenv.ReadConfig(configPath, cfg); err != nil {
+	var cfg Config
+	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
 		log.Fatalf("cannot read config: %s", err)
 	}
 
-	return cfg
+	return &cfg
 }

@@ -34,11 +34,10 @@ func NewCongig(logsDirPath, level, format string, enable bool) *Config {
 */
 func SetupLogger(cfg *Config, apiName string) (*slog.Logger, *os.File) {
 	if !cfg.Enable {
-		return nil, nil
+		return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})), nil
 	}
 
 	var level slog.Level
-
 	switch strings.ToUpper(cfg.Level) {
 	case "DEBUG":
 		level = slog.LevelDebug
@@ -52,10 +51,12 @@ func SetupLogger(cfg *Config, apiName string) (*slog.Logger, *os.File) {
 		level = slog.LevelDebug	
 	}
 
+	if err := os.MkdirAll(cfg.LogsDirPath, os.ModePerm); err != nil {
+		log.Fatal(err)
+	}
 
 	var logger *slog.Logger
 	var logsFile *os.File
-
 	switch strings.ToUpper(cfg.Format) {
 	case "JSON":
 		filePath := strings.ReplaceAll(fmt.Sprintf("%s/%s.json", cfg.LogsDirPath, apiName), "//", "/")
@@ -87,8 +88,10 @@ func SetupLogger(cfg *Config, apiName string) (*slog.Logger, *os.File) {
 }
 
 func CloseLogger(logsFile *os.File) {
-	err := logsFile.Close()
-	if err != nil {
-		log.Fatalf("close log file error: %e", err)
+	if logsFile != nil {
+		err := logsFile.Close()
+		if err != nil {
+			log.Fatalf("close log file error: %e", err)
+		}
 	}
 }
